@@ -78,12 +78,12 @@ const OrderForm = ({ selectedProducts, onUpdateQuantity, total }: OrderFormProps
     };
 
     try {
-      await emailjs.send(
-        process.env.EMAILJS_SERVICE_ID,
-        process.env.EMAILJS_TEMPLATE_ID,
-        templateParams,
-        process.env.EMAILJS_USER_ID
-      );
+     await emailjs.send(
+  process.env.REACT_APP_EMAILJS_SERVICE_ID || "default-service-id",
+  process.env.REACT_APP_EMAILJS_TEMPLATE_ID || "default-template-id",
+  templateParams,
+  process.env.REACT_APP_EMAILJS_USER_ID || "default-user-id"
+);
 
       toast.success("¡Pedido agendado exitosamente!", {
         description: `Fecha de entrega: ${format(values.pickupDate, "PPP", { locale: es })}`,
