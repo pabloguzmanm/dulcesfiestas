@@ -78,12 +78,26 @@ const OrderForm = ({ selectedProducts, onUpdateQuantity, total }: OrderFormProps
     };
 
     try {
-     await emailjs.send(
-  process.env.REACT_APP_EMAILJS_SERVICE_ID || "default-service-id",
-  process.env.REACT_APP_EMAILJS_TEMPLATE_ID || "default-template-id",
-  templateParams,
-  process.env.REACT_APP_EMAILJS_USER_ID || "default-user-id"
-);
+  await emailjs.send(
+    process.env.REACT_APP_EMAILJS_SERVICE_ID || "default-service-id",
+    process.env.REACT_APP_EMAILJS_TEMPLATE_ID || "default-template-id",
+    templateParams,
+    process.env.REACT_APP_EMAILJS_USER_ID || "default-user-id"
+  );
+  toast.success("¡Pedido agendado exitosamente!", {
+    description: `Fecha de entrega: ${format(values.pickupDate, "PPP", { locale: es })}`,
+  });
+  form.reset();
+} catch (error: any) {
+  console.error("Error al enviar el email:", {
+    message: error.message,
+    status: error.status,
+    text: error.text,
+  });
+  toast.error(`Error al enviar el email: ${error.message || 'Desconocido'}`);
+} finally {
+  setIsSubmitting(false);
+}
 
       toast.success("¡Pedido agendado exitosamente!", {
         description: `Fecha de entrega: ${format(values.pickupDate, "PPP", { locale: es })}`,
