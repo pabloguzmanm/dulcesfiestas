@@ -56,7 +56,6 @@ const OrderForm = ({ selectedProducts, onUpdateQuantity, total }: OrderFormProps
 
     setIsSubmitting(true);
 
-    // Prepara el listado de productos como una cadena legible
     const productsList = selectedProducts
       .map((p) => {
         const displayQuantity = p.id === "7" ? p.quantity : `${p.quantity} x`;
@@ -65,7 +64,6 @@ const OrderForm = ({ selectedProducts, onUpdateQuantity, total }: OrderFormProps
       })
       .join("\n");
 
-    // Parámetros para EmailJS
     const templateParams = {
       name: values.name,
       email: values.email,
@@ -77,20 +75,21 @@ const OrderForm = ({ selectedProducts, onUpdateQuantity, total }: OrderFormProps
       total: total.toLocaleString('es-CL'),
     };
 
-    // Depuración de credenciales
-    console.log("Credenciales usadas:", {
-      serviceId: process.env.REACT_APP_EMAILJS_SERVICE_ID,
-      templateId: process.env.REACT_APP_EMAILJS_TEMPLATE_ID,
-      userId: process.env.REACT_APP_EMAILJS_USER_ID,
-    });
+    const serviceId = process.env.REACT_APP_EMAILJS_SERVICE_ID;
+    const templateId = process.env.REACT_APP_EMAILJS_TEMPLATE_ID;
+    const userId = process.env.REACT_APP_EMAILJS_USER_ID;
+
+    console.log("Credenciales usadas:", { serviceId, templateId, userId });
+
+    if (!serviceId || !templateId || !userId) {
+      console.error("Faltan credenciales de EmailJS:", { serviceId, templateId, userId });
+      toast.error("Error: Faltan configuraciones de email. Contacta al administrador.");
+      setIsSubmitting(false);
+      return;
+    }
 
     try {
-      const response = await emailjs.send(
-        process.env.REACT_APP_EMAILJS_SERVICE_ID,
-        process.env.REACT_APP_EMAILJS_TEMPLATE_ID,
-        templateParams,
-        process.env.REACT_APP_EMAILJS_USER_ID
-      );
+      const response = await emailjs.send(serviceId, templateId, templateParams, userId);
       console.log("Email enviado:", response);
       toast.success("¡Pedido agendado exitosamente!", {
         description: `Fecha de entrega: ${format(values.pickupDate, "PPP", { locale: es })}`,
@@ -98,9 +97,10 @@ const OrderForm = ({ selectedProducts, onUpdateQuantity, total }: OrderFormProps
       form.reset();
     } catch (error: any) {
       console.error("Error al enviar el email:", {
-        message: error.message,
-        status: error.status,
-        text: error.text,
+        message: error.message || "Sin mensaje",
+        status: error.status || "Sin estado",
+        text: error.text || "Sin texto",
+        stack: error.stack || "Sin stack",
       });
       toast.error(`Error al enviar el pedido: ${error.message || 'Desconocido'}`);
     } finally {
@@ -111,22 +111,22 @@ const OrderForm = ({ selectedProducts, onUpdateQuantity, total }: OrderFormProps
   const minDate = addDays(new Date(), 2);
 
   return (
-    <section id="pedidos" className="py-16 px-4 md:px-6 lg:px-8 bg-gradient-to-b from-background to-muted/20">
+    <section id="pedidos" className="py-16 px-4 md:px-6 lg:px-8 bg-gradient-sweet shadow-candy transition-smooth">
       <div className="container mx-auto max-w-3xl">
         <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-candy bg-clip-text text-transparent transition-smooth">
             Agenda tu Pedido
           </h2>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-lg text-[var(--muted-foreground)] transition-smooth">
             Selecciona tus dulces favoritos y agenda con 48 horas de anticipación
           </p>
         </div>
 
-        <Card className="shadow-xl">
+        <Card className="shadow-candy">
           <CardHeader>
             <CardTitle>Productos Seleccionados</CardTitle>
             {selectedProducts.length === 0 ? (
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-[var(--muted-foreground)]">
                 No has seleccionado ningún producto. Agrega productos desde el catálogo.
               </p>
             ) : (
@@ -134,21 +134,21 @@ const OrderForm = ({ selectedProducts, onUpdateQuantity, total }: OrderFormProps
                 {selectedProducts.map((product) => (
                   <div
                     key={product.id}
-                    className="flex items-center justify-between p-3 bg-muted rounded-lg"
+                    className="flex items-center justify-between p-3 bg-[var(--muted)] rounded-lg transition-smooth"
                   >
                     <div className="flex-1">
                       <span className="font-medium">{product.name}</span>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-[var(--muted-foreground)]">
                         {product.id === "7" ? `${product.quantity} ${product.quantity === 1 ? "unidad" : "unidades"}` : `${product.quantity} x $${product.price.toLocaleString('es-CL')}`}
                       </p>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className="font-semibold text-primary">
+                      <span className="font-semibold text-[var(--primary)]">
                         ${product.id === "7" ? product.price.toLocaleString('es-CL') : (product.price * product.quantity).toLocaleString('es-CL')}
                       </span>
                       <button
                         onClick={() => onUpdateQuantity(product.id, 0)}
-                        className="text-destructive hover:text-destructive/80 transition-colors"
+                        className="text-[var(--destructive)] hover:text-[var(--destructive-foreground)] transition-smooth"
                         title="Eliminar"
                       >
                         <X size={18} />
@@ -156,9 +156,9 @@ const OrderForm = ({ selectedProducts, onUpdateQuantity, total }: OrderFormProps
                     </div>
                   </div>
                 ))}
-                <div className="flex items-center justify-between p-4 bg-primary/10 rounded-lg border-2 border-primary/20 mt-4">
+                <div className="flex items-center justify-between p-4 bg-[var(--primary)]/10 rounded-lg border-2 border-[var(--primary)]/20 mt-4 transition-smooth">
                   <span className="text-xl font-bold">Total:</span>
-                  <span className="text-3xl font-bold text-primary">
+                  <span className="text-3xl font-bold text-[var(--primary)]">
                     ${total.toLocaleString('es-CL')}
                   </span>
                 </div>
@@ -242,7 +242,7 @@ const OrderForm = ({ selectedProducts, onUpdateQuantity, total }: OrderFormProps
                               variant="outline"
                               className={cn(
                                 "w-full pl-3 text-left font-normal",
-                                !field.value && "text-muted-foreground"
+                                !field.value && "text-[var(--muted-foreground)]"
                               )}
                             >
                               {field.value ? (
@@ -292,7 +292,7 @@ const OrderForm = ({ selectedProducts, onUpdateQuantity, total }: OrderFormProps
                 <Button
                   type="submit"
                   size="lg"
-                  className="w-full text-lg"
+                  className="w-full text-lg bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-[var(--primary)]/90 transition-smooth"
                   disabled={isSubmitting || selectedProducts.length === 0}
                 >
                   {isSubmitting ? "Procesando..." : "Agendar Pedido"}
