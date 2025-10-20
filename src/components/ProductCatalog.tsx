@@ -56,7 +56,7 @@ const products = [
   {
     id: "6",
     name: "Mini paletas",
-    description: "Caramelos translúcidos de sabores frutales",
+    description: "Paletas pequeñas personalizadas.",
     price: "$700",
     image: dulce6,
   },

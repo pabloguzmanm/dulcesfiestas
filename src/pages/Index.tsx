@@ -70,74 +70,76 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <header className="relative overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-20"
-          style={{ backgroundImage: `url(https://images.unsplash.com/photo-1518640467707-6811f43a7bf5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80)` }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-secondary/80 to-accent/70" />
-        
-       <nav className="relative z-10 max-w-2xl mx-auto px-3 py-6 flex justify-between items-center">
-  <div className="flex items-center gap-3">
-    <img src={logo} alt="Dulce Encanto Logo" className="w-16 h-16 md:w-20 md:h-20" />
-    <span className="text-2xl font-bold text-white">Dulces Fiestas</span>
-  </div>
-  <div className="hidden md:flex gap-6">
-    <button
-      onClick={() => scrollToSection("productos")}
-      className="text-primary-foreground hover:text-accent transition-colors font-medium"
-    >
-      Productos
-    </button>
-    <button
-      onClick={() => scrollToSection("sobre-nosotros")}
-      className="text-primary-foreground hover:text-accent transition-colors font-medium"
-    >
-      Sobre Nosotros
-    </button>
-    <button
-      onClick={() => scrollToSection("pedidos")}
-      className="text-primary-foreground hover:text-accent transition-colors font-medium"
-    >
-      Pedidos
-    </button>
-  </div>
-</nav>
+<header className="relative overflow-hidden">
+  {/* Imagen de fondo temática */}
+  <div
+    className="absolute inset-0 bg-cover bg-center"
+    style={{ backgroundImage: `url(https://images.unsplash.com/photo-1518640467707-6811f43a7bf5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80)` }}
+  />
+  {/* Overlay degradado para contraste y color */}
+  <div className="absolute inset-0 bg-gradient-to-br from-pink-500/80 via-purple-600/70 to-yellow-400/60" />
 
-        <div className="relative z-10 container mx-auto px-4 py-20 md:py-32">
-          <div className="max-w-3xl mx-auto text-center">
-            
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-white">
-              Endulza tus Momentos
-            </h1>
-            <p className="text-xl md:text-2xl text-primary-foreground/90 mb-8">
-              Haz tus pedidos personalizados y celebra con dulzura junto a Dulces Fiestas
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                size="lg"
-                variant="secondary"
-                onClick={() => scrollToSection("productos")}
-                className="text-lg shadow-lg"
-              >
-                <ShoppingBag className="mr-2 h-5 w-5" />
-                Ver Catálogo
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={() => scrollToSection("pedidos")}
-                className="text-lg bg-white/10 hover:bg-white/20 text-primary-foreground border-primary-foreground/30"
-              >
-                <Clock className="mr-2 h-5 w-5" />
-                Hacer Pedido
-              </Button>
-            </div>
-          </div>
-        </div>
+  {/* Navbar */}
+  <nav className="relative z-20 py-4 px-4 md:px-6 flex justify-between items-center max-w-7xl mx-auto">
+    <div className="flex items-center gap-3">
+      <div className="bg-white/20 backdrop-blur-sm p-1 rounded-full border border-white/30">
+        <img src={logo} alt="Dulces Fiestas Logo" className="w-14 h-14 md:w-16 md:h-16 drop-shadow-sm" />
+      </div>
+      <span className="text-2xl font-bold text-white drop-shadow-md">
+        Dulces Fiestas
+      </span>
+    </div>
 
-      
-      </header>
+    <div className="hidden md:flex gap-6">
+      {[
+        { label: "Productos", id: "productos" },
+        { label: "Sobre Nosotros", id: "sobre-nosotros" },
+        { label: "Pedidos", id: "pedidos" },
+      ].map((item) => (
+        <button
+          key={item.id}
+          onClick={() => scrollToSection(item.id)}
+          className="relative text-white font-medium px-2 py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-white after:transition-all after:duration-300 hover:after:w-full hover:text-yellow-100"
+        >
+          {item.label}
+        </button>
+      ))}
+    </div>
+  </nav>
+
+  {/* Contenido principal del hero */}
+  <div className="relative z-10 container mx-auto px-4 py-16 md:py-28">
+    <div className="max-w-3xl mx-auto text-center">
+      <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 leading-tight text-white drop-shadow-lg">
+        Endulza tus Momentos
+      </h1>
+      <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto px-2 drop-shadow-md">
+        Haz tus pedidos personalizados y celebra con dulzura junto a{' '}
+        <span className="font-semibold text-yellow-100">Dulces Fiestas</span>
+      </p>
+      <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <Button
+          size="lg"
+          variant="default"
+          onClick={() => scrollToSection("productos")}
+          className="text-lg px-8 bg-white text-pink-700 font-bold shadow-lg hover:shadow-xl hover:bg-pink-50 transition-shadow"
+        >
+          <ShoppingBag className="mr-2 h-5 w-5" />
+          Ver Catálogo
+        </Button>
+        <Button
+          size="lg"
+          variant="outline"
+          onClick={() => scrollToSection("pedidos")}
+          className="text-lg px-8 border-white text-white hover:bg-white/10 backdrop-blur-sm"
+        >
+          <Clock className="mr-2 h-5 w-5" />
+          Hacer Pedido
+        </Button>
+      </div>
+    </div>
+  </div>
+</header>
 
       {/* Catalog Section */}
       <ProductCatalog productQuantities={productQuantities} onUpdateQuantity={handleUpdateQuantity} />
@@ -202,35 +204,54 @@ const Index = () => {
       </a>
 
       {/* Footer */}
-      <footer className="bg-card py-8 px-4 border-t">
-        <div className="container mx-auto text-center">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <img src={logo} alt="Dulce Encanto Logo" className="w-10 h-10" />
-            <span className="text-xl font-bold">Dulces Fiestas</span>
-          </div>
-          <p className="text-muted-foreground mb-4">
-            © 2025 Dulces Fiestas. Los mejores dulces artesanales a tu alcance.
-          </p>
-          <div className="flex justify-center gap-6">
-            <a
-              href="mailto:pamedulcesfiestas@gmail.com"
-              className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
-            >
-              <Mail className="h-5 w-5" />
-              pamedulcesfiestas@gmail.com
-            </a>
-            <a
-              href="https://www.instagram.com/_dulcesfiestas_/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
-            >
-              <Instagram className="h-5 w-5" />
-              @_dulcesfiestas_
-            </a>
-          </div>
-        </div>
-      </footer>
+<footer className="relative py-10 px-4 border-t overflow-hidden">
+  {/* Fondo decorativo con "sprinkles" usando pseudo-elementos CSS en Tailwind (simulado con capas) */}
+  <div 
+    className="absolute inset-0 opacity-10"
+    style={{
+      backgroundImage: `
+        radial-gradient(circle at 10% 20%, #FF6F61 2px, transparent 3px),
+        radial-gradient(circle at 90% 30%, #6ECEDA 2px, transparent 3px),
+        radial-gradient(circle at 30% 80%, #FFD166 2px, transparent 3px),
+        radial-gradient(circle at 70% 70%, #06D6A0 2px, transparent 3px)
+      `,
+      backgroundSize: '60px 60px',
+    }}
+  />
+  
+  <div className="container mx-auto text-center relative z-10">
+    <div className="flex items-center justify-center gap-3 mb-6">
+      <img src={logo} alt="Dulce Encanto Logo" className="w-12 h-12 md:w-14 md:h-14 drop-shadow-md" />
+      <span className="text-2xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-yellow-500 bg-clip-text text-transparent">
+        Dulces Fiestas
+      </span>
+    </div>
+    
+    <p className="text-muted-foreground mb-6 max-w-2xl mx-auto px-2">
+      © 2025 Dulces Fiestas. Los mejores dulces artesanales a tu alcance.  
+      <span className="block mt-2 text-sm opacity-80">Hechos con amor, para tus momentos más dulces.</span>
+    </p>
+    
+    <div className="flex flex-wrap justify-center gap-6">
+      <a
+        href="mailto:pamedulcesfiestas@gmail.com"
+        className="group flex items-center gap-2 text-muted-foreground hover:text-pink-500 transition-colors duration-300"
+      >
+        <Mail className="h-5 w-5 group-hover:scale-110 transition-transform" />
+        pamedulcesfiestas@gmail.com
+      </a>
+      <a
+        href="https://www.instagram.com/_dulcesfiestas_/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="group flex items-center gap-2 text-muted-foreground hover:text-pink-500 transition-colors duration-300"
+      >
+        <Instagram className="h-5 w-5 group-hover:scale-110 transition-transform" />
+        @_dulcesfiestas_
+      </a>
+    </div>
+  </div>
+</footer>
     </div>
   );
 };
