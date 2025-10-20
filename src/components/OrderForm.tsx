@@ -36,7 +36,7 @@ interface OrderFormProps {
 
 const OrderForm = ({ selectedProducts, onUpdateQuantity, total }: OrderFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -59,7 +59,7 @@ const OrderForm = ({ selectedProducts, onUpdateQuantity, total }: OrderFormProps
     // Prepara el listado de productos como una cadena legible
     const productsList = selectedProducts
       .map((p) => {
-        const displayQuantity = p.id === "7" ? p.quantity : `${p.quantity} x`; // For Candy Bar, show quantity as variant
+        const displayQuantity = p.id === "7" ? p.quantity : `${p.quantity} x`;
         const unitText = p.id === "7" ? (p.quantity === 1 ? "unidad" : "unidades") : "";
         return `${p.name} ${displayQuantity} ${unitText} - $${p.price.toLocaleString('es-CL')}`;
       })
@@ -77,36 +77,32 @@ const OrderForm = ({ selectedProducts, onUpdateQuantity, total }: OrderFormProps
       total: total.toLocaleString('es-CL'),
     };
 
-    try {
-  await emailjs.send(
-    process.env.REACT_APP_EMAILJS_SERVICE_ID || "default-service-id",
-    process.env.REACT_APP_EMAILJS_TEMPLATE_ID || "default-template-id",
-    templateParams,
-    process.env.REACT_APP_EMAILJS_USER_ID || "default-user-id"
-  );
-  toast.success("¡Pedido agendado exitosamente!", {
-    description: `Fecha de entrega: ${format(values.pickupDate, "PPP", { locale: es })}`,
-  });
-  form.reset();
-} catch (error: any) {
-  console.error("Error al enviar el email:", {
-    message: error.message,
-    status: error.status,
-    text: error.text,
-  });
-  toast.error(`Error al enviar el email: ${error.message || 'Desconocido'}`);
-} finally {
-  setIsSubmitting(false);
-}
+    // Depuración de credenciales
+    console.log("Credenciales usadas:", {
+      serviceId: process.env.REACT_APP_EMAILJS_SERVICE_ID,
+      templateId: process.env.REACT_APP_EMAILJS_TEMPLATE_ID,
+      userId: process.env.REACT_APP_EMAILJS_USER_ID,
+    });
 
+    try {
+      const response = await emailjs.send(
+        process.env.REACT_APP_EMAILJS_SERVICE_ID,
+        process.env.REACT_APP_EMAILJS_TEMPLATE_ID,
+        templateParams,
+        process.env.REACT_APP_EMAILJS_USER_ID
+      );
+      console.log("Email enviado:", response);
       toast.success("¡Pedido agendado exitosamente!", {
         description: `Fecha de entrega: ${format(values.pickupDate, "PPP", { locale: es })}`,
       });
-      
       form.reset();
-    } catch (error) {
-      console.error("Error al enviar el email:", error);
-      toast.error("Error al enviar el pedido. Por favor, inténtalo de nuevo.");
+    } catch (error: any) {
+      console.error("Error al enviar el email:", {
+        message: error.message,
+        status: error.status,
+        text: error.text,
+      });
+      toast.error(`Error al enviar el pedido: ${error.message || 'Desconocido'}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -160,7 +156,6 @@ const OrderForm = ({ selectedProducts, onUpdateQuantity, total }: OrderFormProps
                     </div>
                   </div>
                 ))}
-                
                 <div className="flex items-center justify-between p-4 bg-primary/10 rounded-lg border-2 border-primary/20 mt-4">
                   <span className="text-xl font-bold">Total:</span>
                   <span className="text-3xl font-bold text-primary">
