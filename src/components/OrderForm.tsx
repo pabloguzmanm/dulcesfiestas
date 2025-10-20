@@ -167,7 +167,7 @@ const OrderForm = ({ selectedProducts, onUpdateQuantity, total }: OrderFormProps
                     <FormItem>
                       <FormLabel>Nombre Completo</FormLabel>
                       <FormControl>
-                        <Input placeholder="Juan Pérez" {...field} />
+                        <Input placeholder="Nombre y Apellido" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -210,7 +210,7 @@ const OrderForm = ({ selectedProducts, onUpdateQuantity, total }: OrderFormProps
                       <FormLabel>Dirección de Envío</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="Calle, número, colonia, ciudad, código postal..."
+                          placeholder="Calle, número, ciudad..."
                           className="resize-none"
                           rows={3}
                           {...field}
