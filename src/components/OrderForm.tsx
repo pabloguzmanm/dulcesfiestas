@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -11,17 +11,16 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Badge } from "@/components/ui/badge";
 import { CalendarIcon, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import emailjs from "emailjs-com";
 
 const formSchema = z.object({
-  name: z.string().trim().min(2, "El nombre debe tener al menos 2 caracteres").max(100),
+  name: z.string().trim().min(5, "El nombre debe tener al menos 5 caracteres").max(100),
   email: z.string().trim().email("Email inválido").max(255),
-  phone: z.string().trim().min(10, "Teléfono debe tener al menos 10 dígitos").max(20),
-  address: z.string().trim().min(10, "La dirección debe tener al menos 10 caracteres").max(200, "La dirección es demasiado larga"),
+  phone: z.string().trim().min(9, "El teléfono debe tener al menos 9 dígitos").max(20),
+  address: z.string().trim().min(5, "La dirección debe tener al menos 5 caracteres").max(200, "La dirección es demasiado larga"),
   pickupDate: z.date({
     required_error: "Selecciona una fecha de entrega",
   }),
@@ -36,6 +35,17 @@ interface OrderFormProps {
 
 const OrderForm = ({ selectedProducts, onUpdateQuantity, total }: OrderFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [calculatedTotal, setCalculatedTotal] = useState(0);
+
+  useEffect(() => {
+    const newTotal = selectedProducts.reduce((sum, product) => {
+      const price = typeof product.price === "number" 
+        ? product.price 
+        : parseFloat(product.price.replace(/[^0-9.-]+/g, "")) || 0;
+      return sum + (price * product.quantity);
+    }, 0);
+    setCalculatedTotal(newTotal);
+  }, [selectedProducts]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -57,11 +67,7 @@ const OrderForm = ({ selectedProducts, onUpdateQuantity, total }: OrderFormProps
     setIsSubmitting(true);
 
     const productsList = selectedProducts
-      .map((p) => {
-        const displayQuantity = p.id === "7" ? p.quantity : `${p.quantity} x`;
-        const unitText = p.id === "7" ? (p.quantity === 1 ? "unidad" : "unidades") : "";
-        return `${p.name} ${displayQuantity} ${unitText} - $${p.price.toLocaleString('es-CL')}`;
-      })
+      .map((p) => `${p.name} x${p.quantity} - $${(p.price * p.quantity).toLocaleString('es-CL')}`)
       .join("\n");
 
     const templateParams = {
@@ -72,37 +78,25 @@ const OrderForm = ({ selectedProducts, onUpdateQuantity, total }: OrderFormProps
       pickupDate: format(values.pickupDate, "PPP", { locale: es }),
       notes: values.notes || "Ninguna",
       products_list: productsList,
-      total: total.toLocaleString('es-CL'),
+      total: calculatedTotal.toLocaleString('es-CL'),
     };
 
-    const serviceId = process.env.REACT_APP_EMAILJS_SERVICE_ID;
-    const templateId = process.env.REACT_APP_EMAILJS_TEMPLATE_ID;
-    const userId = process.env.REACT_APP_EMAILJS_USER_ID;
-
-    console.log("Credenciales usadas:", { serviceId, templateId, userId });
-
-    if (!serviceId || !templateId || !userId) {
-      console.error("Faltan credenciales de EmailJS:", { serviceId, templateId, userId });
-      toast.error("Error: Faltan configuraciones de email. Contacta al administrador.");
-      setIsSubmitting(false);
-      return;
-    }
-
     try {
-      const response = await emailjs.send(serviceId, templateId, templateParams, userId);
-      console.log("Email enviado:", response);
+      await emailjs.send(
+        "service_xu53kvi",
+        "template_vuk464n",
+        templateParams,
+        "A5mXmcvyWpgUORjL2"
+      );
+
       toast.success("¡Pedido agendado exitosamente!", {
         description: `Fecha de entrega: ${format(values.pickupDate, "PPP", { locale: es })}`,
       });
+      
       form.reset();
-    } catch (error: any) {
-      console.error("Error al enviar el email:", {
-        message: error.message || "Sin mensaje",
-        status: error.status || "Sin estado",
-        text: error.text || "Sin texto",
-        stack: error.stack || "Sin stack",
-      });
-      toast.error(`Error al enviar el pedido: ${error.message || 'Desconocido'}`);
+    } catch (error) {
+      console.error("Error al enviar el email:", error);
+      toast.error("Error al enviar el pedido. Por favor, inténtalo de nuevo.");
     } finally {
       setIsSubmitting(false);
     }
@@ -111,44 +105,41 @@ const OrderForm = ({ selectedProducts, onUpdateQuantity, total }: OrderFormProps
   const minDate = addDays(new Date(), 2);
 
   return (
-    <section id="pedidos" className="py-16 px-4 md:px-6 lg:px-8 bg-gradient-sweet shadow-candy transition-smooth">
+    <section id="pedidos" className="py-16 px-4 md:px-6 lg:px-8 bg-gradient-to-b from-background to-muted/20">
       <div className="container mx-auto max-w-3xl">
         <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-candy bg-clip-text text-transparent transition-smooth">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
             Agenda tu Pedido
           </h2>
-          <p className="text-lg text-[var(--muted-foreground)] transition-smooth">
+          <p className="text-lg text-muted-foreground">
             Selecciona tus dulces favoritos y agenda con 48 horas de anticipación
           </p>
         </div>
 
-        <Card className="shadow-candy">
+        <Card className="shadow-xl">
           <CardHeader>
             <CardTitle>Productos Seleccionados</CardTitle>
             {selectedProducts.length === 0 ? (
-              <p className="text-sm text-[var(--muted-foreground)]">
+              <p className="text-sm text-muted-foreground">
                 No has seleccionado ningún producto. Agrega productos desde el catálogo.
               </p>
             ) : (
-              <div className="space-y-3 mt-4">
+              <div className="space-y-4 mt-4">
                 {selectedProducts.map((product) => (
                   <div
                     key={product.id}
-                    className="flex items-center justify-between p-3 bg-[var(--muted)] rounded-lg transition-smooth"
+                    className="bg-card p-4 rounded-lg shadow-md flex items-center justify-between gap-4"
                   >
-                    <div className="flex-1">
-                      <span className="font-medium">{product.name}</span>
-                      <p className="text-sm text-[var(--muted-foreground)]">
-                        {product.id === "7" ? `${product.quantity} ${product.quantity === 1 ? "unidad" : "unidades"}` : `${product.quantity} x $${product.price.toLocaleString('es-CL')}`}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="font-semibold text-[var(--primary)]">
-                        ${product.id === "7" ? product.price.toLocaleString('es-CL') : (product.price * product.quantity).toLocaleString('es-CL')}
+                    <span className="font-medium flex-1">{product.name}</span>
+                    <span className="flex-1 text-center">{product.quantity}</span>
+                    <span className="flex-1 text-muted-foreground text-center">${product.price.toLocaleString('es-CL')}</span>
+                    <div className="flex-1 flex items-center justify-between">
+                      <span className="font-semibold text-primary">
+                        ${(product.price * product.quantity).toLocaleString('es-CL')}
                       </span>
                       <button
                         onClick={() => onUpdateQuantity(product.id, 0)}
-                        className="text-[var(--destructive)] hover:text-[var(--destructive-foreground)] transition-smooth"
+                        className="text-destructive hover:text-destructive/80 transition-colors"
                         title="Eliminar"
                       >
                         <X size={18} />
@@ -156,10 +147,11 @@ const OrderForm = ({ selectedProducts, onUpdateQuantity, total }: OrderFormProps
                     </div>
                   </div>
                 ))}
-                <div className="flex items-center justify-between p-4 bg-[var(--primary)]/10 rounded-lg border-2 border-[var(--primary)]/20 mt-4 transition-smooth">
+                
+                <div className="flex items-center justify-between p-4 bg-primary/10 rounded-lg border-2 border-primary/20 mt-4">
                   <span className="text-xl font-bold">Total:</span>
-                  <span className="text-3xl font-bold text-[var(--primary)]">
-                    ${total.toLocaleString('es-CL')}
+                  <span className="text-3xl font-bold text-primary">
+                    ${calculatedTotal.toLocaleString('es-CL')}
                   </span>
                 </div>
               </div>
@@ -229,6 +221,7 @@ const OrderForm = ({ selectedProducts, onUpdateQuantity, total }: OrderFormProps
                   )}
                 />
 
+                {/* ✅ CALENDARIO CON FONDO AMARILLO CLARO */}
                 <FormField
                   control={form.control}
                   name="pickupDate"
@@ -242,7 +235,7 @@ const OrderForm = ({ selectedProducts, onUpdateQuantity, total }: OrderFormProps
                               variant="outline"
                               className={cn(
                                 "w-full pl-3 text-left font-normal",
-                                !field.value && "text-[var(--muted-foreground)]"
+                                !field.value && "text-muted-foreground"
                               )}
                             >
                               {field.value ? (
@@ -254,7 +247,10 @@ const OrderForm = ({ selectedProducts, onUpdateQuantity, total }: OrderFormProps
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
+                        <PopoverContent 
+                          className="w-auto p-3 bg-yellow-50 border border-yellow-200 rounded-md shadow-lg"
+                          align="start"
+                        >
                           <Calendar
                             mode="single"
                             selected={field.value}
@@ -262,6 +258,7 @@ const OrderForm = ({ selectedProducts, onUpdateQuantity, total }: OrderFormProps
                             disabled={(date) => date < minDate}
                             initialFocus
                             locale={es}
+                            className="bg-yellow-50"
                           />
                         </PopoverContent>
                       </Popover>
@@ -292,7 +289,7 @@ const OrderForm = ({ selectedProducts, onUpdateQuantity, total }: OrderFormProps
                 <Button
                   type="submit"
                   size="lg"
-                  className="w-full text-lg bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-[var(--primary)]/90 transition-smooth"
+                  className="w-full text-lg"
                   disabled={isSubmitting || selectedProducts.length === 0}
                 >
                   {isSubmitting ? "Procesando..." : "Agendar Pedido"}

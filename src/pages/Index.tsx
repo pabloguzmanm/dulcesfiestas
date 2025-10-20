@@ -77,36 +77,37 @@ const Index = () => {
         />
         <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-secondary/80 to-accent/70" />
         
-        <nav className="relative z-10 container mx-auto px-4 py-6 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <img src={logo} alt="Dulce Encanto Logo" className="w-16 h-16 md:w-20 md:h-20" />
-            <span className="text-2xl font-bold text-primary-foreground">Dulces Fiestas</span>
-          </div>
-          <div className="hidden md:flex gap-6">
-            <button
-              onClick={() => scrollToSection("productos")}
-              className="text-primary-foreground hover:text-accent transition-colors font-medium"
-            >
-              Productos
-            </button>
-            <button
-              onClick={() => scrollToSection("sobre-nosotros")}
-              className="text-primary-foreground hover:text-accent transition-colors font-medium"
-            >
-              Sobre Nosotros
-            </button>
-            <button
-              onClick={() => scrollToSection("pedidos")}
-              className="text-primary-foreground hover:text-accent transition-colors font-medium"
-            >
-              Pedidos
-            </button>
-          </div>
-        </nav>
+       <nav className="relative z-10 max-w-2xl mx-auto px-3 py-6 flex justify-between items-center">
+  <div className="flex items-center gap-3">
+    <img src={logo} alt="Dulce Encanto Logo" className="w-16 h-16 md:w-20 md:h-20" />
+    <span className="text-2xl font-bold text-white">Dulces Fiestas</span>
+  </div>
+  <div className="hidden md:flex gap-6">
+    <button
+      onClick={() => scrollToSection("productos")}
+      className="text-primary-foreground hover:text-accent transition-colors font-medium"
+    >
+      Productos
+    </button>
+    <button
+      onClick={() => scrollToSection("sobre-nosotros")}
+      className="text-primary-foreground hover:text-accent transition-colors font-medium"
+    >
+      Sobre Nosotros
+    </button>
+    <button
+      onClick={() => scrollToSection("pedidos")}
+      className="text-primary-foreground hover:text-accent transition-colors font-medium"
+    >
+      Pedidos
+    </button>
+  </div>
+</nav>
 
         <div className="relative z-10 container mx-auto px-4 py-20 md:py-32">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-5xl md:text-7xl font-extrabold text-primary-foreground mb-6 leading-tight">
+            
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-white">
               Endulza tus Momentos
             </h1>
             <p className="text-xl md:text-2xl text-primary-foreground/90 mb-8">
@@ -135,21 +136,7 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Wave divider */}
-        <div className="relative z-10">
-          <svg
-            className="w-full h-16 md:h-24"
-            viewBox="0 0 1440 120"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            preserveAspectRatio="none"
-          >
-            <path
-              d="M0 0L60 10C120 20 240 40 360 46.7C480 53 600 47 720 43.3C840 40 960 40 1080 46.7C1200 53 1320 67 1380 73.3L1440 80V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0V0Z"
-              fill="hsl(var(--background))"
-            />
-          </svg>
-        </div>
+      
       </header>
 
       {/* Catalog Section */}

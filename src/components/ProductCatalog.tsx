@@ -1,3 +1,7 @@
+
+
+
+// ProductCatalog.tsx (versión final con 3 columnas y alineación visual)
 import ProductCard from "./ProductCard";
 import dulce1 from "@/assets/dulce1.png";
 import dulce2 from "@/assets/dulce2.png";
@@ -80,7 +84,7 @@ const products = [
 const ProductCatalog = ({ productQuantities, onUpdateQuantity }: ProductCatalogProps) => {
   return (
     <section id="productos" className="py-16 px-4 md:px-6 lg:px-8">
-      <div className="container mx-auto">
+      <div className="container mx-auto max-w-7xl"> {/* 👈 max-w-7xl da más espacio para 3 columnas sin apretar */}
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
             Nuestros Dulces
@@ -89,7 +93,7 @@ const ProductCatalog = ({ productQuantities, onUpdateQuantity }: ProductCatalogP
             Descubre nuestra deliciosa selección de dulces artesanales
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-stretch">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"> {/* 👈 3 columnas en lg+ */}
           {products.map((product) => (
             <ProductCard
               key={product.id}
@@ -105,3 +109,4 @@ const ProductCatalog = ({ productQuantities, onUpdateQuantity }: ProductCatalogP
 };
 
 export default ProductCatalog;
+
