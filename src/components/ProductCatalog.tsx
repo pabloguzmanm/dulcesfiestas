@@ -1,7 +1,4 @@
-
-
-
-// ProductCatalog.tsx (versión final con 3 columnas y alineación visual)
+// ProductCatalog.tsx
 import ProductCard from "./ProductCard";
 import dulce1 from "@/assets/dulce1.png";
 import dulce2 from "@/assets/dulce2.png";
@@ -14,7 +11,7 @@ import dulce8 from "@/assets/dulce8.png";
 
 interface ProductCatalogProps {
   productQuantities: Record<string, number>;
-  onUpdateQuantity: (id: string, name: string, quantity: number, variant?: string) => void;
+  onUpdateQuantity: (id: string, name: string, quantity: number, variant?: number) => void;
 }
 
 const products = [
@@ -83,17 +80,30 @@ const products = [
 
 const ProductCatalog = ({ productQuantities, onUpdateQuantity }: ProductCatalogProps) => {
   return (
-    <section id="productos" className="py-16 px-4 md:px-6 lg:px-8">
-      <div className="container mx-auto max-w-7xl"> {/* 👈 max-w-7xl da más espacio para 3 columnas sin apretar */}
+    <section 
+      id="productos" 
+      className="py-16 px-4 md:px-6 lg:px-8 relative overflow-hidden"
+      style={{
+        background: `linear-gradient(to bottom, #fdf2f8, #f3e8ff, #fff9e6)`,
+        backgroundImage: `
+          radial-gradient(circle at 10% 20%, #FF6F61 1.5px, transparent 2px),
+          radial-gradient(circle at 90% 30%, #6ECEDA 1.5px, transparent 2px),
+          radial-gradient(circle at 30% 80%, #FFD166 1.5px, transparent 2px),
+          radial-gradient(circle at 70% 70%, #A06CD5 1.5px, transparent 2px)
+        `,
+        backgroundSize: '80px 80px',
+      }}
+    >
+      <div className="container mx-auto max-w-7xl">
         <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-pink-500 via-purple-500 to-yellow-400 bg-clip-text text-transparent">
             Nuestros Dulces
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Descubre nuestra deliciosa selección de dulces artesanales
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"> {/* 👈 3 columnas en lg+ */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.map((product) => (
             <ProductCard
               key={product.id}
@@ -109,4 +119,3 @@ const ProductCatalog = ({ productQuantities, onUpdateQuantity }: ProductCatalogP
 };
 
 export default ProductCatalog;
-
